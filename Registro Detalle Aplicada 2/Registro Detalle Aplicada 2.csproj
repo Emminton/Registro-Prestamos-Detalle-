@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <StarworkingDirectory>$(MSBuildProjectDirectory)</StarworkingDirectory>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Registro_Detalle_Aplicada_2</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Toast" Version="3.1.2" />
+    <PackageReference Include="microsoft.EntityFrameworkCore.sqlite" Version="3.1.5" />
+    <PackageReference Include="microsoft.EntityFrameworkCore.Tools" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
