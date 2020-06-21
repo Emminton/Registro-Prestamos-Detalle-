@@ -87,7 +87,7 @@
     [Parameter]
     public int PersonaId { get; set; }
 
-    private Persona personas = new Persona();
+     Persona personas = new Persona();
 
     protected override void OnInitialized()
     {
@@ -104,7 +104,7 @@
 
     private void Nuevo()
     {
-        Persona personas = new Persona();
+        this.personas = new Persona();
         
     }
 

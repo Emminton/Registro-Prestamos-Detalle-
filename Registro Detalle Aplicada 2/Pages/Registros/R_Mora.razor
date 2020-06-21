@@ -37,35 +37,35 @@
                     <ValidationMessage For="@(() => moras.Fecha)" />
                 </div>
 
-                @*Si Existentes un Prestamos *@
                 <div class="form-group">
                     <div class="form-row">
                         <div class="col">
-                            <label>PrestamoId</label>
-                            <select class="form-control" @bind="SeleccionPrestamo">
-                                <option value="" disabled selected>Prestamos Disponibles</option>
+                            <label>PrestamoID:</label>
+                            <select class="form-control" @bind="prestamoSeleccionado" @onclick="MostrarNombrePersona">
                                 @foreach (var item in ListaPrestamo)
                                 {
-                                    <option value="@item.PrestamoId">Id:@item.PrestamoId a Nombre de:@item.Nombre</option>
+                                    <option value="@item.PrestamoId">@item.PrestamoId</option>
                                  }
                             </select>
+                        </div>
+
+                        <div class="col">
+                            <label>A Nombre:</label>
+                            <InputText class="form-control" readonly="true" @bind-Value="nombrePersona" />
+                        </div>
+
+                        <div class="col">
+                            <label>Valor</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="valorColocado" class="form-control" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary" @onclick="AgregarMora">Agregar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                @*Monto*@
-                <div class="form-row align-items-center">
-                    <div class="col">
-                        <label>Monto</label>
-                        <div class="input-group">
-                            <InputNumber @bind-Value="MontoDetalle" class="form-control" />
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary oi oi-plus" @onclick="Agregar"> Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
-                @*La Tabla*@
                 <div class="table-responsive text-nowrap" style="position: relative; height:180px; overflow: auto; display: block;">
                     <table class="table table-striped">
                         <thead class="thead-light">
@@ -79,7 +79,7 @@
                         @*Tabla de Datos*@
                         <tbody class="bg-white">
                             @foreach (var item in moras.MoraDetalle)
-                            {
+                             {
                                 <tr>
                                     <td>@item.MoraDetalleId</td>
                                     <td>@item.MoraId</td>
@@ -87,7 +87,7 @@
                                     <td>@item.Valor</td>
                                     <td><button type="button" class="btn btn-lg btn-danger oi oi-minus" @onclick="(() => Remover(item))"> Remover</button></td>
                                 </tr>
-}
+                             }
                         </tbody>
                     </table>
                 </div>
@@ -113,13 +113,13 @@
 
 @code
 { 
-    
+
     [Parameter]
     public int MoraId { get; set; }
 
-    private decimal MontoDetalle { get; set; }
-
-    private int SeleccionPrestamo { get; set; }
+    public int prestamoSeleccionado { get; set; }
+    public decimal valorColocado { get; set; }
+    public string nombrePersona { get; set; }
 
     private Mora moras = new Mora();
     private List<Prestamo> ListaPrestamo = new List<Prestamo>();
@@ -142,9 +142,21 @@
 
     private void Nuevo()
     {
-        moras = new Mora();
-        SeleccionPrestamo = 0;
-        MontoDetalle = 0;
+        this.moras = new Mora();
+        prestamoSeleccionado = 0;
+        valorColocado = 0;
+        nombrePersona = string.Empty;
+    }
+    private void MostrarNombrePersona()
+    {
+        string auxNombre = string.Empty;
+
+        var auxPrestamo = PrestamoBLL.Buscar(prestamoSeleccionado);
+        if (auxPrestamo != null)
+        {
+            auxNombre = PersonaBLL.Buscar(auxPrestamo.PersonaId).Nombre;
+            nombrePersona = auxNombre;
+        }
     }
 
     private void Buscar()
@@ -171,15 +183,15 @@
         moras.Total = total;
     }
 
-    private void Agregar()
+    private void AgregarMora()
     {
-        if (SeleccionPrestamo == 0)
+        if (prestamoSeleccionado == 0)
         {
             toast.ShowWarning("Tiene que seleccionar un prestamoId");
             return;
         }
 
-        if (MontoDetalle <= 0)
+        if (valorColocado <= 0)
         {
             toast.ShowWarning("El Monto debe ser mayor a 0.");
             return;
@@ -189,12 +201,12 @@
             this.moras.MoraDetalle.Add(new MorasDetalle
             {
                 MoraId = moras.MoraId,
-                PrestamoId = SeleccionPrestamo,
-                Valor = MontoDetalle
+                PrestamoId = prestamoSeleccionado,
+                Valor = valorColocado
             });
 
-            SeleccionPrestamo = 0;
-            MontoDetalle = 0;
+            prestamoSeleccionado = 0;
+            valorColocado = 0;
         }
         CalcularTotal();
     }
@@ -248,5 +260,5 @@
         }
         else
             toast.ShowError("No fue posible eliminar");
-    } 
+    }
  }
